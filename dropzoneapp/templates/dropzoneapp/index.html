@@ -2,4 +2,14 @@
 
 {%block content%}
 <h3>jasdfjadsjfh</h3>
+
+
+<!-- burdaki slaslar cok onemli          /upload/        -->
+<form action="/upload/" method="POST" class="dropzone" id="my-awesome-dropzone">
+    {% csrf_token %}
+    <div class="fallback">
+        <input name="file" type="file" multiple>
+    </div>
+</form>
+
 {%endblock%}
