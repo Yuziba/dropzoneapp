@@ -11,3 +11,17 @@
       <a href="{% url 'dropzoneapp:file_download' file_id=file_instance.id %}" onclick="console.log('{{ file_instance.id }}')">Dosyayı İndir</a>
     {% endfor %}
   </ul>
+
+
+  def download_file(request, file_id):
+    file_instance = get_object_or_404(UploadedFile, id=file_id)
+    file_field_name = 'file'    # Dosya alanının adını temsil eden değişken
+    print("idddddddddddddd",file_id)
+    file_path = file_instance.file.path     # Dosya yolu oluştur
+    print("Dosya yolu oluştur",file_path)
+
+    with open(file_path, 'rb') as file:
+        response = FileResponse(file)
+        print("fileeeee",file)
+        response['Content-Disposition'] = f'attachment; filename="{file_instance.file.name}"'
+        return response

@@ -49,32 +49,20 @@ def delete_file(request, file_id):
 
 
     
+import mimetypes
+
 def download_file(request, file_id):
     file_instance = get_object_or_404(UploadedFile, id=file_id)
-    file_field_name = 'file'    # Dosya alanının adını temsil eden değişken
-    print("idddddddddddddd",file_id)
-    file_path = file_instance.file.path     # Dosya yolu oluştur
-    print("Dosya yolu oluştur",file_path)
+    file_path = file_instance.file.path
 
-    response = FileResponse(file_path)
-    print("fileeeee",file_path)
-    response['Content-Disposition'] = f'attachment; filename="{file_instance.file.name}"'
-    return response
+    # MIME türünü belirle
+    mime_type, encoding = mimetypes.guess_type(file_path)
 
-
-"""class FileDownloadView(View):
-    def get(self, request, file_id):
-        file_instance = get_object_or_404(UploadedFile, pk=file_id)
-        print("isimmmm ",file_instance)
-        try:
-            # Dosyayı aç ve kullanıcıya gönder
-            file_path = default_storage.path(file_instance.file.name)
-            with open(file_path, 'rb') as file:
-                response = FileResponse(file)
-                response['Content-Disposition'] = f'attachment; filename="{file_instance.file.name}"'
-                print("BBBBBBBBBBB,",file_instance.file.name)
-                return response
-        except FileNotFoundError:
-            raise Http404("Belirtilen dosya bulunamadı.")"""
-
-
+    # Dosyayı aç ve kullanıcıya gönder
+    try:
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type=mime_type)
+            response['Content-Disposition'] = f'attachment; filename="{file_instance.file.name}"'
+            return response
+    except FileNotFoundError:
+        raise Http404("Belirtilen dosya bulunamadı.")
